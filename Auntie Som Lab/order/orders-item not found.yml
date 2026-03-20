@@ -1,0 +1,34 @@
+info:
+  name: orders-item not found
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |2-
+        {
+          "itemId": 0,
+          "quantity": 1
+        }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        test("order item not found", function () {
+          const body = res.getBody();
+          expect(res.getStatus()).to.equal(404);
+          expect(body.error).to.equal("Item not found");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

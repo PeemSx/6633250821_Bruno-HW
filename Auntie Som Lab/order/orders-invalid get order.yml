@@ -1,0 +1,25 @@
+info:
+  name: orders-invalid get order
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}/orders/fakeId"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        test("get invalid order", function () {
+          const body = res.getBody();
+          expect(res.getStatus()).to.equal(404);
+          expect(body.error).to.equal("Order not found");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

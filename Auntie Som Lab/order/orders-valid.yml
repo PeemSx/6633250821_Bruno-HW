@@ -1,0 +1,41 @@
+info:
+  name: orders-valid
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |2-
+        {
+          "itemId": 1,
+          "quantity": 2
+        }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (res.getStatus() === 200 && body.orderId) {
+          bru.setEnvVar("lastOrderId", body.orderId);
+        }
+
+        // Assert
+        test("order succeed", function () {
+          const body = res.getBody();
+          expect(res.getStatus()).to.equal(200);
+          expect(body.orderId).to.not.equal("");
+          expect(body.totalPrice).to.equal(100);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

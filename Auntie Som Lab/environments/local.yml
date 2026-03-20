@@ -1,0 +1,8 @@
+name: local
+variables:
+  - name: baseUrl
+    value: http://localhost:5000
+  - secret: true
+    name: accessToken
+  - name: lastOrderId
+    value: ""

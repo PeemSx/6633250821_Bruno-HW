@@ -1,0 +1,25 @@
+info:
+  name: menus
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/menu"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        // Assert
+        test("get menus suceed", function(){
+          const body = res.getBody();
+          
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

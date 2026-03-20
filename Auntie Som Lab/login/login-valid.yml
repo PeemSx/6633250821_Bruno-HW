@@ -1,0 +1,44 @@
+info:
+  name: login-valid
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/login"
+  params:
+    - name: ""
+      value: ""
+      type: query
+  body:
+    type: json
+    data: |-
+      {
+        "username": "student",
+        "password": "hungry"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (res.getStatus() === 200 && body.accessToken) {
+          bru.setEnvVar("accessToken", body.accessToken);
+        }
+
+        // Assert
+        test("login succeed", function () {
+          const body = res.getBody();
+          expect(res.getStatus()).to.equal(200);
+          expect(body.accessToken).to.be.a("string");
+          expect(body.accessToken).to.not.equal("");
+          expect(body.expiresIn).to.equal(3600);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

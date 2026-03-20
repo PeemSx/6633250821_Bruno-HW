@@ -1,0 +1,35 @@
+info:
+  name: orders-over amount in stock
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |2-
+        {
+          "itemId": 2,
+          "quantity": 2
+        }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        // Assert
+        test("order over amount in stock", function () {
+          const body = res.getBody();
+          expect(res.getStatus()).to.equal(400);
+          expect(body.error).to.equal("Out of stock");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,33 @@
+info:
+  name: orders-without token
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |2-
+        {
+          "itemId": 1,
+          "quantity": 1
+        }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        // Assert
+        test("order without token", function () {
+          const body = res.getBody();
+          expect(res.getStatus()).to.equal(401);
+          expect(body.error).to.equal("Unauthorized");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
